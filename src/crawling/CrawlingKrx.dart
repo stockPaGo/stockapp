@@ -25,135 +25,133 @@ void main() {
       '일자 : ${element.trd_dd}, 종가 : ${element.tdd_clsprc}, 시가 : ${element.tdd_opnprc}, 고가 : ${element.tdd_hgprc}, 저가 : ${element.tdd_lwprc}, 거래량 : ${element.acc_trdvol}'
   ); }));*/
 
-  /*CrawlingKrx.getAllForeignerStock(UtilDate.getDay(day: -1)).then((value) => value.forEach((element) {
+  /*getAllForeignerStock(UtilDate.getDay(day: -1)).then((value) => value.forEach((element) {
     print('종목코드 : ${element.isu_srt_cd}, 종목명 : ${element.isu_abbrv}, 등락률 : ${element.fluc_rt} ');
   }));*/
 
-  CrawlingKrx.getIndividualStockPer('005930').then((value) => value.forEach((element) {
+  getIndividualStockPer('005930').then((value) => value.forEach((element) {
     print('일자 : ${element.trd_dd}, bps : ${element.bps}, eps : ${element.eps}, pbr : ${element.pbr}, per : ${element.per}');
   }));
 
-  /*CrawlingKrx.getAllStockPer(UtilDate.getDay(day: -1)).then((value) => value.forEach((element) {
+  /*getAllStockPer(UtilDate.getDay(day: -1)).then((value) => value.forEach((element) {
     print('종목코드 : ${element.isu_srt_cd}, 종목명 : ${element.isu_abbrv}, bps : ${element.bps}, eps : ${element.eps}, pbr : ${element.pbr}, per : ${element.per}');
   }));*/
 }
 
-class CrawlingKrx {
-  // 개별종목 시세 추이
-  // 005930, 삼성전자
-  static Future<List<ModelStockPrice>> getIndividualStockPriceProgress (isu_cd) async {
-    http.Response response = await http.post(
+// 개별종목 시세 추이
+// 005930, 삼성전자
+Future<List<ModelStockPrice>> getIndividualStockPriceProgress (isu_cd) async {
+  http.Response response = await http.post(
       'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
-      'bld=dbms/MDC/STAT/standard/MDCSTAT01701&'
-      'tboxisuCd_finder_stkisu0_2=${isu_cd}/&'
-      'isuCd=KR7${isu_cd}003&'
-      'isuCd2=KR7${isu_cd}003&'
-      'codeNmisuCd_finder_stkisu0_2=&'
-      'param1isuCd_finder_stkisu0_2=STK&'
-      'strtDd=19950502&'
-      'endDd=${UtilDate.getDay(day: -1)}&'
-      'share=1&'
-      'money=1&'
-      'csvxls_isNo=false'
-    );
-
-    final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
-    return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
-  }
-
-  // 전종목 시세 추이
-  static Future<List<ModelStockPrice>> getAllStockPriceProgress (trdDd) async {
-    http.Response response = await http.post(
-      'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
-      'bld=dbms/MDC/STAT/standard/MDCSTAT01501&'
-      'mktId=ALL&'
-      'trdDd=${trdDd}&'
-      'share=1&'
-      'money=1&'
-      'csvxls_isNo=false'
-    );
-
-    final parsed = json.decode(utf8.decode(response.bodyBytes))['OutBlock_1'].cast<Map<String, dynamic>>();
-    return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
-  }
-
-  // 개별종목 외국인 보유량
-  static Future<List<ModelForeignerStock>> getIndividualForeignerStock (isu_cd) async {
-    http.Response response = await http.post(
-      'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
-      'bld=dbms/MDC/STAT/standard/MDCSTAT03702&'
-      'searchType=2&'
-      'mktId=ALL&'
-      'trdDd=${UtilDate.getDay(day: -1)}&'
-      'tboxisuCd_finder_stkisu0_1=${isu_cd}/&'
-      'isuCd=KR7${isu_cd}003&'
-      'isuCd2=KR7${isu_cd}003&'
-      'codeNmisuCd_finder_stkisu0_1=&'
-      'param1isuCd_finder_stkisu0_1=STK&'
-      'strtDd=20051003&'
-      'endDd=${UtilDate.getDay(day: -1)}&'
-      'share=1&'
-      'csvxls_isNo=false',
-    );
-
-    final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
-    return parsed.map<ModelForeignerStock>((json) => ModelForeignerStock.fromJson(json)).toList();
-  }
-
-  // 전종목 외국인 보유량
-  static Future<List<ModelForeignerStock>> getAllForeignerStock (trdDd) async {
-    http.Response response = await http.post(
-      'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
-      'bld=dbms/MDC/STAT/standard/MDCSTAT03701&'
-      'searchType=1&'
-      'mktId=ALL&'
-      'trdDd=${trdDd}&'
-      'param1isuCd_finder_stkisu0_1=STK&'
-      'share=1&'
-      'csvxls_isNo=false',
-    );
-
-    final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
-    return parsed.map<ModelForeignerStock>((json) => ModelForeignerStock.fromJson(json)).toList();
-  }
-
-  // 개별종목 PER
-  static Future<List<ModelStockPrice>> getIndividualStockPer (isu_cd) async {
-    http.Response response = await http.post(
-      'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
-      'bld=dbms/MDC/STAT/standard/MDCSTAT03502&'
-      'searchType=2&'
-      'mktId=ALL&'
-      'trdDd=${UtilDate.getDay(day: -1)}&'
-      'tboxisuCd_finder_stkisu0_2=${isu_cd}/&'
-      'isuCd=KR7${isu_cd}003&'
-      'isuCd2=KR7${isu_cd}003&'
-      'codeNmisuCd_finder_stkisu0_2=&'
-      'param1isuCd_finder_stkisu0_2=STK&'
-      'strtDd=20051003&'
-      'endDd=${UtilDate.getDay(day: -1)}&'
-      'csvxls_isNo=false',
-    );
-
-    final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
-    return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
-  }
-
-  // 전종목 PER
-  // getAllStockPer
-  static Future<List<ModelStockPrice>> getAllStockPer (trdDd) async {
-    http.Response response = await http.post(
-      'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
-          'bld=dbms/MDC/STAT/standard/MDCSTAT03501&'
-          'searchType=1&'
-          'mktId=ALL&'
-          'trdDd=${trdDd}&'
+          'bld=dbms/MDC/STAT/standard/MDCSTAT01701&'
+          'tboxisuCd_finder_stkisu0_2=${isu_cd}/&'
+          'isuCd=KR7${isu_cd}003&'
+          'isuCd2=KR7${isu_cd}003&'
           'codeNmisuCd_finder_stkisu0_2=&'
           'param1isuCd_finder_stkisu0_2=STK&'
-          'csvxls_isNo=false',
-    );
+          'strtDd=19950502&'
+          'endDd=${UtilDate.getDay(day: -1)}&'
+          'share=1&'
+          'money=1&'
+          'csvxls_isNo=false'
+  );
 
-    final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
-    return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
-  }
+  final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
+  return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
+}
+
+// 전종목 시세 추이
+Future<List<ModelStockPrice>> getAllStockPriceProgress (trdDd) async {
+  http.Response response = await http.post(
+    'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
+    'bld=dbms/MDC/STAT/standard/MDCSTAT01501&'
+    'mktId=ALL&'
+    'trdDd=${trdDd}&'
+    'share=1&'
+    'money=1&'
+    'csvxls_isNo=false'
+  );
+
+  final parsed = json.decode(utf8.decode(response.bodyBytes))['OutBlock_1'].cast<Map<String, dynamic>>();
+  return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
+}
+
+// 개별종목 외국인 보유량
+Future<List<ModelForeignerStock>> getIndividualForeignerStock (isu_cd) async {
+  http.Response response = await http.post(
+    'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
+    'bld=dbms/MDC/STAT/standard/MDCSTAT03702&'
+    'searchType=2&'
+    'mktId=ALL&'
+    'trdDd=${UtilDate.getDay(day: -1)}&'
+    'tboxisuCd_finder_stkisu0_1=${isu_cd}/&'
+    'isuCd=KR7${isu_cd}003&'
+    'isuCd2=KR7${isu_cd}003&'
+    'codeNmisuCd_finder_stkisu0_1=&'
+    'param1isuCd_finder_stkisu0_1=STK&'
+    'strtDd=20051003&'
+    'endDd=${UtilDate.getDay(day: -1)}&'
+    'share=1&'
+    'csvxls_isNo=false',
+  );
+
+  final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
+  return parsed.map<ModelForeignerStock>((json) => ModelForeignerStock.fromJson(json)).toList();
+}
+
+// 전종목 외국인 보유량
+Future<List<ModelForeignerStock>> getAllForeignerStock (trdDd) async {
+  http.Response response = await http.post(
+    'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
+    'bld=dbms/MDC/STAT/standard/MDCSTAT03701&'
+    'searchType=1&'
+    'mktId=ALL&'
+    'trdDd=${trdDd}&'
+    'param1isuCd_finder_stkisu0_1=STK&'
+    'share=1&'
+    'csvxls_isNo=false',
+  );
+
+  final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
+  return parsed.map<ModelForeignerStock>((json) => ModelForeignerStock.fromJson(json)).toList();
+}
+
+// 개별종목 PER
+Future<List<ModelStockPrice>> getIndividualStockPer (isu_cd) async {
+  http.Response response = await http.post(
+    'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
+    'bld=dbms/MDC/STAT/standard/MDCSTAT03502&'
+    'searchType=2&'
+    'mktId=ALL&'
+    'trdDd=${UtilDate.getDay(day: -1)}&'
+    'tboxisuCd_finder_stkisu0_2=${isu_cd}/&'
+    'isuCd=KR7${isu_cd}003&'
+    'isuCd2=KR7${isu_cd}003&'
+    'codeNmisuCd_finder_stkisu0_2=&'
+    'param1isuCd_finder_stkisu0_2=STK&'
+    'strtDd=20051003&'
+    'endDd=${UtilDate.getDay(day: -1)}&'
+    'csvxls_isNo=false',
+  );
+
+  final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
+  return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
+}
+
+// 전종목 PER
+// getAllStockPer
+Future<List<ModelStockPrice>> getAllStockPer (trdDd) async {
+  http.Response response = await http.post(
+    'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd?'
+        'bld=dbms/MDC/STAT/standard/MDCSTAT03501&'
+        'searchType=1&'
+        'mktId=ALL&'
+        'trdDd=${trdDd}&'
+        'codeNmisuCd_finder_stkisu0_2=&'
+        'param1isuCd_finder_stkisu0_2=STK&'
+        'csvxls_isNo=false',
+  );
+
+  final parsed = json.decode(utf8.decode(response.bodyBytes))['output'].cast<Map<String, dynamic>>();
+  return parsed.map<ModelStockPrice>((json) => ModelStockPrice.fromJson(json)).toList();
 }
