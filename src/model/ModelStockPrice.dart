@@ -25,6 +25,12 @@ class ModelStockPrice {
   final String pbr;
   final String per;
 
+  // 네이버 목표주가 and 기타
+  final String goal_price;
+  final String suggestion;
+  final String same_per;
+  final String same_per_fluctuation;
+
   ModelStockPrice({
     this.trd_dd = '',
     this.tdd_clsprc = '',
@@ -47,6 +53,10 @@ class ModelStockPrice {
     this.isu_srt_cd = '',
     this.pbr = '',
     this.per = '',
+    this.goal_price = '',
+    this.suggestion = '',
+    this.same_per = '',
+    this.same_per_fluctuation = '',
   });
 
   factory ModelStockPrice.fromJson(Map<String, dynamic> json) {
@@ -72,6 +82,10 @@ class ModelStockPrice {
       isu_srt_cd: json['ISU_SRT_CD'] as String,
       pbr: json['PBR'] as String,
       per: json['PER'] as String,
+      goal_price: json['GOAL_PRICE'] as String,
+      suggestion: json['SUGGESTION'] as String,
+      same_per: json['SAME_PER'] as String,
+      same_per_fluctuation: json['SAME_PER_FLUCTUATION'] as String,
     );
   }
 
@@ -97,6 +111,10 @@ class ModelStockPrice {
     'isu_srt_cd' : isu_srt_cd.toString(),
     'pbr' : pbr.toString(),
     'per' : per.toString(),
+    'goal_price' : goal_price.toString(),
+    'suggestion' : suggestion.toString(),
+    'same_per' : same_per.toString(),
+    'same_per_fluctuation' : same_per_fluctuation.toString(),
   };
 
   static toColumn(str) =>
