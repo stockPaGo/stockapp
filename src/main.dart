@@ -1,13 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/database/Database.dart';
-import 'package:flutter_app/page/all/All.dart';
-import 'package:flutter_app/page/byDate/ByDate.dart';
-import 'package:flutter_app/page/byMonth/ByMonth.dart';
-import 'package:flutter_app/page/detail/Detail.dart';
-import 'package:flutter_app/page/interest/Interest.dart';
-import 'package:flutter_app/page/rank/Rank.dart';
-import 'package:flutter_app/page/search/Search.dart';
-import 'package:flutter_app/tensorFlow/TensorFlow.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,3 +31,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
+
+
